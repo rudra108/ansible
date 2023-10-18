@@ -1,0 +1,19 @@
+---
+- name: Ansible Vault Playbook Example
+  hosts: anrocky
+  become: yes
+  become_method: sudo
+  vars_files:
+    - vault.yml
+  tasks:
+    - name: Ensure Mariadb is installed
+      package:
+        name: mariadb-server
+        state: present
+    - name: Configure mariadb using the vault variable
+      mysql_user:
+        name: jilg
+        password: "{{ db_password }}"
+        login_user: root
+        login_password: ""
+        login_unix_socket: /var/lib/mysql/mysql.sock
