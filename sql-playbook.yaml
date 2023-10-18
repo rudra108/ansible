@@ -1,0 +1,30 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: Install Apache
+    package:
+      name: httpd
+      state: present
+  - name: Start Apache and enable on boot
+    service:
+      name: httpd
+      state: started
+      enabled: yes
+  - name: Install PHP and required modules
+    package:
+      name: "{{ item }}"
+      state: present
+    loop:
+      - php
+      - php-mysql
+      - php-mbstring
+  - name: Install MariaDB
+    package:
+      name: mariadb-server
+      state: present
+  - name: Start MariaDB and enable on boot
+    service:
+      name: mariadb
+      state: started
+      enabled: yes
