@@ -1,0 +1,39 @@
+---
+- name: Install Rancher
+  hosts: rancher_servers
+  become: yes
+  tasks:
+    - name: Add Docker repository
+      yum_repository:
+        name: docker-ce
+        description: Docker CE Repository
+        baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
+        gpgcheck: yes
+        enabled: yes
+        gpgkey: https://download.docker.com/linux/centos/gpg
+        state: present
+    - name: Install Docker
+      package:
+        name: docker-ce
+        state: present
+    - name: Start and enable Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+    - name: Install Rancher
+      docker_container:
+        name: rancher
+        image: rancher/rancher:latest
+        ports:
+          - "80:80"
+          - "443:443"
+        restart_policy: always
+      register: rancher_container
+    - name: Wait for Rancher to be healthy
+      wait_for:
+        host: localhost
+        port: 80
+        timeout: 300
+      become: no
+      ignore_errors: yes
