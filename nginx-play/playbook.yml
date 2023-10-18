@@ -1,0 +1,13 @@
+---
+- name: Deploy and Configure
+  hosts: mnode1
+  become: yes
+  become_method: sudo
+  roles:
+    - nginx
+  tasks:
+    - name: Create Index.html
+      template: 
+        src: templates/index.html.j2
+        dest: /var/www/html/index.html
+      notify: Restart Nginx  

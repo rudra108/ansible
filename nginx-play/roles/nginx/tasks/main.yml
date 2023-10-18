@@ -1,0 +1,21 @@
+---
+- name: Install Nginx
+  apt:
+    name: nginx
+    state: present
+  notify: Restart Nginx
+- name: Deploy Nginx Site Configuration
+  template:
+    src: nginx-site.conf.j2
+    dest: /etc/nginx/sites-available/my-site
+    owner: root
+    group: root
+  notify: Restart Nginx
+- name: Enable Nginx site
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/my-site
+    dest: /etc/nginx/sites-enabled/my-site 
+    state: link
+    owner: root
+    group: root
+  notify: Restart Nginx
